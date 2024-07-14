@@ -25,14 +25,21 @@ socket.connect("http://localhost:8000");
 // socket listeners
 socket.on("message", ({ author, content }) => app.addMessage(author, content));
 socket.on("newUser", (userName) =>
-  app.addMessage("Chat Bot", `${userName} has joined the conversation!`)
+  app.addMessage("Chat Bot", `${userName} has joined the conversation!`, true)
 );
 socket.on("removeUser", (userName) =>
-  app.addMessage("Chat Bot", `${userName} has left the conversation!`)
+  app.addMessage("Chat Bot", `${userName} has left the conversation!`, true)
 );
 
-const messageElementHTML = (userName, messageContent, self = false) =>
-  `<li class="message ${self ? "message--self" : ""} message--received">
+const messageElementHTML = (
+  userName,
+  messageContent,
+  self = false,
+  announcement = false
+) =>
+  `<li class="message ${self ? "message--self" : ""} message--received ${
+    announcement ? "message--announcement" : ""
+  }">
             <h3 class="message__author">${self ? "You" : userName}</h3>
             <div class="message__content">${messageContent}</div>
           </li>`;
@@ -101,7 +108,7 @@ const app = {
     console.log("sendMessage");
     socket.emit("message", { author, content });
   },
-  addMessage: function (author, content) {
+  addMessage: function (author, content, announcement = false) {
     console.log("addMessage");
     const thisApp = this;
     const messages = document.querySelectorAll(selectors.allMessages);
@@ -118,7 +125,7 @@ const app = {
 
     const self = author === userName;
 
-    const messageHTML = messageElementHTML(author, content, self);
+    const messageHTML = messageElementHTML(author, content, self, announcement);
 
     thisApp.dom.messagesList.innerHTML += messageHTML;
     thisApp.dom.messageContentInput.value = "";

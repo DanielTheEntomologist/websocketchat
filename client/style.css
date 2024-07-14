@@ -116,6 +116,13 @@ p {
   background: #3498db;
 }
 
+.message--announcement .message__content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #0064e7;
+}
+
 .show {
   display: block;
 }

@@ -59,14 +59,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("users", users);
-    let removedUser;
+    let removedUsers;
     users.forEach((user, index) => {
       if (user.id === socket.id) {
-        removedUser = users.splice(index, 1);
+        removedUsers = users.splice(index, 1);
       }
     });
     try {
+      const removedUser = removedUsers[0];
       console.log(
         removedUser.name + " connected with " + socket.id + " has left"
       );
