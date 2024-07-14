@@ -7,7 +7,7 @@ const app = express();
 
 // set paths
 const __dirname = path.resolve();
-const staticPath = path.join(__dirname, "/public");
+const staticPath = path.join(__dirname, "/client");
 
 // set middleware
 app.use(express.static(staticPath));

@@ -61,6 +61,10 @@ const app = {
     const thisApp = this;
     console.log("login");
     userName = thisApp.dom.userNameInput.value;
+    if (userName === "") {
+      alert("Please enter a username");
+      return;
+    }
     thisApp.hideLoginSection();
     thisApp.showMessages();
     thisApp.dom.userNameInput.value = "";
