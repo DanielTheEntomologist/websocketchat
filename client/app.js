@@ -16,12 +16,18 @@ const dom = {
 
 let userName;
 
-const messageElementHTML = (
-  userName,
-  messageContent,
-  self = false
-) => `<li class="message ${self ? "message--self" : ""} message--received">
-            <h3 class="message__author">${userName}</h3>
+// create socket
+const socket = io({
+  autoConnect: false,
+});
+socket.connect("http://localhost:8000");
+
+// socket listeners
+socket.on("message", ({ author, content }) => app.addMessage(author, content));
+
+const messageElementHTML = (userName, messageContent, self = false) =>
+  `<li class="message ${self ? "message--self" : ""} message--received">
+            <h3 class="message__author">${self ? "You" : userName}</h3>
             <div class="message__content">${messageContent}</div>
           </li>`;
 
@@ -53,6 +59,7 @@ const app = {
     thisApp.dom.addMessageForm.addEventListener("submit", function (event) {
       event.preventDefault();
       const messageContent = thisApp.dom.messageContentInput.value;
+      thisApp.addMessage(userName, messageContent);
       thisApp.sendMessage(userName, messageContent);
     });
   },
@@ -85,6 +92,10 @@ const app = {
 
   sendMessage: function (author, content) {
     console.log("sendMessage");
+    socket.emit("message", { author, content });
+  },
+  addMessage: function (author, content) {
+    console.log("addMessage");
     const thisApp = this;
     const messages = document.querySelectorAll(selectors.allMessages);
 
@@ -99,13 +110,10 @@ const app = {
     }
 
     const self = author === userName;
-    if (self === true) {
-      author = "You";
-    }
 
     const messageHTML = messageElementHTML(author, content, self);
-    thisApp.dom.messagesList.innerHTML += messageHTML;
 
+    thisApp.dom.messagesList.innerHTML += messageHTML;
     thisApp.dom.messageContentInput.value = "";
   },
 };
