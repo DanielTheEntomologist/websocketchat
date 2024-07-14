@@ -88,6 +88,7 @@ const app = {
     socket.emit("join", userName);
     thisApp.hideLoginSection();
     thisApp.showMessages();
+    thisApp.addMessage("Chat Bot", `Welcome ${userName}!`, true);
     thisApp.dom.userNameInput.value = "";
     thisApp.dom.messageContentInput.value = "";
   },
@@ -95,6 +96,7 @@ const app = {
   showMessages: function () {
     const thisApp = this;
     console.log("showMessages");
+    thisApp.dom.messagesList.innerHTML = "";
     thisApp.dom.messagesSection.classList.add("show");
   },
 

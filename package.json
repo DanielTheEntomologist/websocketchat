@@ -4,6 +4,7 @@
   "description": "my first websocket app",
   "main": "server.mjs",
   "scripts": {
+    "start": "node server.mjs",
     "watch": "nodemon server.mjs",
     "test": "npm run test"
   },
