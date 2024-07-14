@@ -19,9 +19,9 @@ let userName;
 const messageElementHTML = (
   userName,
   messageContent,
-  self
+  self = false
 ) => `<li class="message ${self ? "message--self" : ""} message--received">
-            <h3 class="message__author">${self ? "You" : userName}</h3>
+            <h3 class="message__author">${userName}</h3>
             <div class="message__content">${messageContent}</div>
           </li>`;
 
@@ -52,7 +52,8 @@ const app = {
     });
     thisApp.dom.addMessageForm.addEventListener("submit", function (event) {
       event.preventDefault();
-      thisApp.addMessage();
+      const messageContent = thisApp.dom.messageContentInput.value;
+      thisApp.sendMessage(userName, messageContent);
     });
   },
 
@@ -78,8 +79,8 @@ const app = {
     thisApp.dom.loginForm.classList.remove("show");
   },
 
-  addMessage: function () {
-    console.log("addMessage");
+  sendMessage: function (author, content) {
+    console.log("sendMessage");
     const thisApp = this;
     const messages = document.querySelectorAll(selectors.allMessages);
 
@@ -88,13 +89,17 @@ const app = {
       message.classList.remove("message--received");
     }
 
-    const messageContent = thisApp.dom.messageContentInput.value;
-    if (messageContent === "") {
+    if (content === "") {
       alert("Empty message not sent");
       return;
     }
 
-    const messageHTML = messageElementHTML(userName, messageContent, true);
+    const self = author === userName;
+    if (self === true) {
+      author = "You";
+    }
+
+    const messageHTML = messageElementHTML(author, content, self);
     thisApp.dom.messagesList.innerHTML += messageHTML;
 
     thisApp.dom.messageContentInput.value = "";
