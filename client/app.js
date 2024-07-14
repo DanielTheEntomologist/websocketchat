@@ -24,6 +24,12 @@ socket.connect("http://localhost:8000");
 
 // socket listeners
 socket.on("message", ({ author, content }) => app.addMessage(author, content));
+socket.on("newUser", (userName) =>
+  app.addMessage("Chat Bot", `${userName} has joined the conversation!`)
+);
+socket.on("removeUser", (userName) =>
+  app.addMessage("Chat Bot", `${userName} has left the conversation!`)
+);
 
 const messageElementHTML = (userName, messageContent, self = false) =>
   `<li class="message ${self ? "message--self" : ""} message--received">
@@ -72,6 +78,7 @@ const app = {
       alert("Please enter a username");
       return;
     }
+    socket.emit("join", userName);
     thisApp.hideLoginSection();
     thisApp.showMessages();
     thisApp.dom.userNameInput.value = "";

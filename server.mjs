@@ -16,8 +16,9 @@ app.use(express.static(staticPath));
 app.use(express.json());
 app.use(cors());
 
-// create message log
+// create server state
 const messages = [];
+const users = [];
 
 // set views
 const views = {
@@ -45,14 +46,36 @@ const io = new Socket(server);
 
 io.on("connection", (socket) => {
   console.log("New client! Its id – " + socket.id);
+  socket.on("join", (userName) => {
+    console.log("Client Logged In " + socket.id + " as " + userName);
+    users.push({ name: userName, id: socket.id });
+    socket.broadcast.emit("newUser", userName);
+  });
+
   socket.on("message", (message) => {
-    console.log("Oh, I've got something from " + socket.id);
+    console.log("Message from " + socket.id, message);
     messages.push(message);
-    console.log("message", message);
     socket.broadcast.emit("message", message);
   });
+
   socket.on("disconnect", () => {
-    console.log("Oh, socket " + socket.id + " has left");
+    console.log("users", users);
+    let removedUser;
+    users.forEach((user, index) => {
+      if (user.id === socket.id) {
+        removedUser = users.splice(index, 1);
+      }
+    });
+    try {
+      console.log(
+        removedUser.name + " connected with " + socket.id + " has left"
+      );
+      socket.broadcast.emit("removeUser", removedUser.name);
+    } catch (error) {
+      console.log(
+        "User from socket.id: " + socket.id + " has left",
+        "They were not registered in users"
+      );
+    }
   });
-  console.log("I've added a listener on message and disconnect events \n");
 });
